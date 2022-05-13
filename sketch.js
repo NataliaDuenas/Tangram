@@ -8,15 +8,17 @@ let Cuandrado2;
 let indice;
 let Figuras;
 let fondo;
-let i=0;
-let ListaDatos=[];
+let n=0;
 
 function preload() {
-  datos = loadJSON('triangulo (7).json');
-}
+  let i= random(1,6)
+    print('Nivel'+parseInt(i)+'.json')
+    numero='Nivel'+parseInt(i)+'.json'
+  Datos = loadJSON(numero);
+  }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight); 
+    createCanvas(windowWidth, windowHeight); 
   
  Triangulo1  = {
     x: 0, 
@@ -93,10 +95,10 @@ function setup() {
         this.alpha += angulo;
       }
     },
-    desplazar: function (x, y) {
+    desplazar: function (xO, yO) {
       if (this.permitir) {
-        this.xO = x;
-        this.yO = y;
+        this.xO = xO;
+        this.yO = yO;
       }
     },
     evaluar: function () {
@@ -116,14 +118,7 @@ function setup() {
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
       //scale(this.escala)
-      triangle(
-        this.x - 84,
-        this.y - 42,
-        this.x + 84,
-        this.y - 42,
-        this.x,
-        this.y + 42
-      );
+      triangle(- 84, - 42, 84, - 42, 0, 42);
       pop();
     },
   };
@@ -307,7 +302,6 @@ function setup() {
     rgba: color(255, 227, 20, 255),
     linea: 1,
     lineargba: color(0),
-    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -335,7 +329,6 @@ function setup() {
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
-      //scale(this.escala)
       quad(
         this.x + 42,
         this.y,
@@ -366,7 +359,6 @@ function setup() {
     rgba: color(26, 206, 220, 255),
     linea: 1,
     lineargba: color(0),
-    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -399,7 +391,6 @@ function setup() {
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
-      //scale(this.escala)
       quad(
         this.x - this.r * 21,
         this.y - 21,
@@ -424,25 +415,23 @@ function setup() {
 }
 
 function Niveles(fondo){
-  let x, y, a;  
-  for (nivel=1; nivel<=ListaDatos.lenght; nivel++){
+  let x, y, a, b;  
   for(indice in fondo ){  
-    x = ListaDatos[nivel].x[indice];
-    print(x)
-    y= ListaDatos[nivel].y[indice]
-    a= ListaDatos[nivel].rotacion[indice]
-    fondo[indice].rgba= color(255)
+    x = Datos.x[indice];
+    y= Datos.y[indice]
+    a= Datos.rotacion[indice]
     fondo[indice].linea=5
     fondo[indice].lineargba= color(255)
     fondo[indice].permitir=true
+    fondo[indice].rgba= color(255)
     fondo[indice].desplazar(x,y)
     fondo[indice].rotar(a)
     if (indice==6){
-      fondo[indice].r=ListaDatos[nivel].reflejar
+      fondo[indice].r=Datos.reflejar
     }
-    fondo[indice].permitir=false
+        fondo[indice].permitir=false
   }
-  } 
+  
 }
 
  function exportar(Figuras){
@@ -459,7 +448,7 @@ function Niveles(fondo){
        x: x,
        y: y,
        rotacion: tetha,
-       reflejar: r}
+       reflejar: r,}
      }
 
 function draw() {
@@ -479,13 +468,13 @@ function draw() {
 function Teclado() {
 for (indice in Figuras) {
   if (keyIsDown(LEFT_ARROW))  {
-    Figuras[indice].xt -= 2;}
+    Figuras[indice].xO -= 2;}
   if (keyIsDown(RIGHT_ARROW)) {
-    Figuras[indice].xt += 2;}
+    Figuras[indice].xO += 2;}
   if (keyIsDown(UP_ARROW))    {
-    Figuras[indice].yt -= 2;}
+    Figuras[indice].yO -= 2;}
   if (keyIsDown(DOWN_ARROW))  {
-    Figuras[indice].yt += 2;}
+    Figuras[indice].yO += 2;}
   if (keyIsDown(CONTROL))     {
     Figuras[indice].tetha += 0.005;} 
   else if (keyIsDown(SHIFT))  {
@@ -516,18 +505,10 @@ function keyPressed() {
   }
 }
 function keyTyped() { 
-  
-  if (key==='s'){  
-  i+=1
-  datos = exportar(Figuras)
-    ListaDatos.push(datos)
-    datos = 'notas' + i
-    print(ListaDatos)
+  if (key==='s'){ 
+    n+=1
+    saveJSON (exportar(Figuras), 'Nivel'+n)
   }
-  
-  if (key==='a'){
-    Niveles(fondo)
-  } 
    for (indice in Figuras){
   Figuras[indice].tecla = key;
   Figuras[indice].linea = 1;
