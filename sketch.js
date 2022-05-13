@@ -7,10 +7,12 @@ let Cuandrado1;
 let Cuandrado2;
 let indice;
 let Figuras;
-var fondo;
+let fondo;
+let i=0;
+let ListaDatos=[];
 
 function preload() {
-  problema = loadJSON('triangulo.json');
+  datos = loadJSON('triangulo (7).json');
 }
 
 function setup() {
@@ -29,6 +31,8 @@ function setup() {
     tecla: "",
     rgba: color(3, 150, 54, 255),
     linea: 1,
+    lineargba: color(0),
+    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -52,9 +56,11 @@ function setup() {
     dibujo: function () {
       fill(this.rgba);
       strokeWeight(this.linea);
+      stroke(this.lineargba)
       push();
       translate(this.xO, this.yO); // Mueve el canvas segun la funcion dezplazar donde se asigna valor xO y YO
       rotate(radians(this.alpha)); // Rota el canvas segun la funcion rotar donde se asigna valor a alpha
+      //scale(this.escala)
       triangle(
         this.x - 84,
         this.y - 28,
@@ -80,6 +86,8 @@ function setup() {
     tecla: "",
     rgba: color(255, 87, 51, 255),
     linea: 1,
+    lineargba: color(0),
+    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -103,9 +111,11 @@ function setup() {
     dibujo: function () {
       fill(this.rgba);
       strokeWeight(this.linea);
+      stroke(this.lineargba)
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
+      //scale(this.escala)
       triangle(
         this.x - 84,
         this.y - 42,
@@ -131,6 +141,8 @@ function setup() {
     tecla: "",
     rgba: color(130, 20, 255, 255),
     linea: 1,
+    lineargba: color(0),
+    //escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -157,6 +169,8 @@ function setup() {
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
+      //scale(this.escala)
+      stroke(this.lineargba)
       triangle(
         this.x,
         this.y + 21,
@@ -182,6 +196,8 @@ function setup() {
     tecla: "",
     rgba: color(0, 6, 194, 255),
     linea: 1,
+    lineargba: color(0),
+    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -205,9 +221,11 @@ function setup() {
     dibujo: function () {
       fill(this.rgba);
       strokeWeight(this.linea);
+      stroke(this.lineargba)
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
+      //scale(this.escala)
       triangle(
         this.x,
         this.y + 21,
@@ -225,7 +243,7 @@ function setup() {
     y: 0,
     xO: 70,
     yO: 300,
-    alpha: 45,
+    alpha: 0,
     tetha: 0,
     xt: 70,
     yt: 300,
@@ -233,6 +251,8 @@ function setup() {
     tecla: "",
     rgba: color(222, 21, 42, 255),
     linea: 1,
+    lineargba: color(0),
+    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -256,9 +276,11 @@ function setup() {
     dibujo: function () {
       fill(this.rgba);
       strokeWeight(this.linea);
+      stroke(this.lineargba)
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
+      //scale(this.escala)
       triangle(
         this.x + 21,
         this.y - 63,
@@ -284,6 +306,8 @@ function setup() {
     tecla: "",
     rgba: color(255, 227, 20, 255),
     linea: 1,
+    lineargba: color(0),
+    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -307,9 +331,11 @@ function setup() {
     dibujo: function () {
       fill(this.rgba);
       strokeWeight(this.linea);
+      stroke(this.lineargba)
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
+      //scale(this.escala)
       quad(
         this.x + 42,
         this.y,
@@ -339,6 +365,8 @@ function setup() {
     tecla: "",
     rgba: color(26, 206, 220, 255),
     linea: 1,
+    lineargba: color(0),
+    escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
         this.alpha += angulo;
@@ -367,9 +395,11 @@ function setup() {
     dibujo: function () {
       fill(this.rgba);
       strokeWeight(this.linea);
+      stroke(this.lineargba)
       push();
       translate(this.xO, this.yO);
       rotate(radians(this.alpha));
+      //scale(this.escala)
       quad(
         this.x - this.r * 21,
         this.y - 21,
@@ -385,53 +415,62 @@ function setup() {
   };
   
   Figuras=[Triangulo1, Triangulo2, Triangulo3, Triangulo4, Triangulo5, Cuadrado1, Cuadrado2];
-  fondo = Object.assign([], Figuras)
   
+ fondo = Object.assign([], Figuras)
   for (indice in Figuras) {
-    fondo[indice]=Object.assign([],Figuras[indice])
+    fondo[indice]=Object.assign([],Figuras[indice])  
   }
+  Niveles(fondo)
 }
 
-function Problema(fondo){
+function Niveles(fondo){
   let x, y, a;  
-  print("estoy aqui")
+  for (nivel=1; nivel<=ListaDatos.lenght; nivel++){
   for(indice in fondo ){  
-    x = problema.x[indice];
-    y= problema.y[indice]
-    a= problema.rotacion[indice]
+    x = ListaDatos[nivel].x[indice];
+    print(x)
+    y= ListaDatos[nivel].y[indice]
+    a= ListaDatos[nivel].rotacion[indice]
+    fondo[indice].rgba= color(255)
+    fondo[indice].linea=5
+    fondo[indice].lineargba= color(255)
     fondo[indice].permitir=true
     fondo[indice].desplazar(x,y)
     fondo[indice].rotar(a)
-    print(x,y,a)
+    if (indice==6){
+      fondo[indice].r=ListaDatos[nivel].reflejar
+    }
+    fondo[indice].permitir=false
   }
-  
+  } 
 }
 
  function exportar(Figuras){
   let x=[]
   let y=[]
   let tetha=[]
+  let r=Figuras[6].r
        for(indice in Figuras){
          x.push(Figuras[indice].xO)
          y.push(Figuras[indice].yO)
          tetha.push(Figuras[indice].alpha)
-       print(Figuras[indice].alpha)}
+       }
    return {
        x: x,
        y: y,
-       rotacion: tetha}
+       rotacion: tetha,
+       reflejar: r}
      }
 
 function draw() {
   background(220);
   
-  
   for (indice in Figuras) {
-    Figuras[indice].dibujo()
-    fondo[indice].permitir=false
-    fondo[indice].dibujo()
+    fondo[indice].dibujo()   
   }
-  
+  for (indice in Figuras) {
+  Figuras[indice].dibujo()
+  }
   
   
   Teclado(); 
@@ -477,12 +516,18 @@ function keyPressed() {
   }
 }
 function keyTyped() { 
-  if (key==='s'){ 
-    saveJSON (exportar(Figuras), 'triangulo')
+  
+  if (key==='s'){  
+  i+=1
+  datos = exportar(Figuras)
+    ListaDatos.push(datos)
+    datos = 'notas' + i
+    print(ListaDatos)
   }
-  if (key==='a'){ 
-    Problema(fondo)
-  }
+  
+  if (key==='a'){
+    Niveles(fondo)
+  } 
    for (indice in Figuras){
   Figuras[indice].tecla = key;
   Figuras[indice].linea = 1;
