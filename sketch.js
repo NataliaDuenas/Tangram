@@ -26,7 +26,6 @@ function setup() {
     xO: 90, 
     yO: 40, 
     alpha: 0,
-    tetha: 0,
     xt: 90,
     yt: 40,
     permitir: false,
@@ -37,7 +36,7 @@ function setup() {
     escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
-        this.alpha += angulo;
+        this.alpha = angulo;
       }
     },
     desplazar: function (x, y) {
@@ -81,7 +80,6 @@ function setup() {
     xO: 90,
     yO: 150,
     alpha: 0,
-    tetha: 0,
     xt: 90,
     yt: 150,
     permitir: false,
@@ -92,7 +90,7 @@ function setup() {
     escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
-        this.alpha += angulo;
+        this.alpha = angulo;
       }
     },
     desplazar: function (xO, yO) {
@@ -129,7 +127,6 @@ function setup() {
     xO: 50,
     yO: 230,
     alpha: 0,
-    tetha: 0,
     xt: 50,
     yt: 230,
     permitir: false,
@@ -140,7 +137,7 @@ function setup() {
     //escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
-        this.alpha += angulo;
+        this.alpha = angulo;
       }
     },
     desplazar: function (x, y) {
@@ -184,7 +181,6 @@ function setup() {
     xO: 150,
     yO: 230,
     alpha: 0,
-    tetha: 0,
     xt: 150,
     yt: 230,
     permitir: false,
@@ -195,7 +191,7 @@ function setup() {
     escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
-        this.alpha += angulo;
+        this.alpha = angulo;
       }
     },
     desplazar: function (x, y) {
@@ -239,7 +235,6 @@ function setup() {
     xO: 70,
     yO: 300,
     alpha: 0,
-    tetha: 0,
     xt: 70,
     yt: 300,
     permitir: false,
@@ -250,7 +245,7 @@ function setup() {
     escala:windowWidth/900,
     rotar: function (angulo) {
       if (this.permitir) {
-        this.alpha += angulo;
+        this.alpha = angulo;
       }
     },
     desplazar: function (x, y) {
@@ -294,7 +289,6 @@ function setup() {
     xO: 160,
     yO: 310,
     alpha: 0,
-    tetha: 0,
     xt: 160,
     yt: 310,
     permitir: false,
@@ -304,7 +298,7 @@ function setup() {
     lineargba: color(0),
     rotar: function (angulo) {
       if (this.permitir) {
-        this.alpha += angulo;
+        this.alpha = angulo;
       }
     },
     desplazar: function (x, y) {
@@ -351,7 +345,6 @@ function setup() {
     xO: 110,
     yO: 390,
     alpha: 0,
-    tetha: 0,
     xt: 90,
     yt: 390,
     permitir: false,
@@ -361,7 +354,7 @@ function setup() {
     lineargba: color(0),
     rotar: function (angulo) {
       if (this.permitir) {
-        this.alpha += angulo;
+        this.alpha = angulo;
       }
     },
     desplazar: function (x, y) {
@@ -467,7 +460,9 @@ function draw() {
 
 function Teclado() {
 for (indice in Figuras) {
-  if (keyIsDown(LEFT_ARROW))  {
+
+  if (Triangulo1.tecla-1 == indice) {
+      if (keyIsDown(LEFT_ARROW))  {
     Figuras[indice].xO -= 2;}
   if (keyIsDown(RIGHT_ARROW)) {
     Figuras[indice].xO += 2;}
@@ -476,17 +471,14 @@ for (indice in Figuras) {
   if (keyIsDown(DOWN_ARROW))  {
     Figuras[indice].yO += 2;}
   if (keyIsDown(CONTROL))     {
-    Figuras[indice].tetha += 0.005;} 
+    Figuras[indice].alpha += 0.5;} 
   else if (keyIsDown(SHIFT))  {
-     Figuras[indice].tetha -= 0.005;}
-  else {
-    Figuras[indice].tetha = 0;}
- 
-  if (Triangulo1.tecla-1 == indice) {
+     Figuras[indice].alpha -= 0.5;}
+  
     Figuras[indice].rgba = color(70, 90, 110, 255);
     Figuras[indice].linea = 5;
-    Figuras[indice].desplazar(Figuras[indice].xt, Figuras[indice].yt); 
-    Figuras[indice].rotar(Figuras[indice].tetha); 
+    Figuras[indice].desplazar(Figuras[indice].xO, Figuras[indice].yO); 
+    Figuras[indice].rotar(Figuras[indice].alpha); 
   }
   
     
@@ -524,7 +516,8 @@ function keyTyped() {
 function mouseWheel(event) {
   for (indice in Figuras){
   Figuras[indice].evaluar();
-  Figuras[indice].rotar(event.deltaY * 0.005);}
+  A=Figuras[indice].alpha+event.deltaY * 0.5
+  Figuras[indice].rotar(A); }
 } 
 function mouseDragged() {for (indice in Figuras){
   Figuras[indice].desplazar(mouseX, mouseY);}
