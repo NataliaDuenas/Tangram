@@ -1,130 +1,224 @@
+let indice;
+let Figuras;
+let fondo;
+let ColorUsuario=[];
+let TeclaUsuario="tcla";
+let n = 0;
+
+function preload() {
+  let i = random(1, 6);
+  print("Nivel" + parseInt(i) + ".json");
+  numero = "Nivel" + parseInt(i) + ".json";
+  Datos = loadJSON(numero);
+}
+
+class Triangulo {
+  constructor(xO, yO, rgba, length) {
+    (this.xO = xO),
+      (this.yO = yO),
+      (this.alpha = 0),
+      (this.permitir = false),
+      (this.tecla = ""),
+      (this.rgba = color(rgba)),
+      (this.linea = 1),
+      (this.lineargba = color("black")),
+      (this.length = length),
+      (this.a = [1,2]),
+      (this.b = [2,3]);
+  }
+  rotar(angulo) {
+    if (this.permitir) {
+      this.alpha = angulo;
+    }
+  }
+  desplazar(x, y) {
+    if (this.permitir) {
+      this.xO = x;
+      this.yO = y;
+    }
+  }
+  evaluar(TeclaUsuario,ColorUsuario) {
+    this.a = get(this.xO, this.yO);
+    this.b = ColorUsuario;
+    this.permitir = arraysIdentical(this.a, this.b) || TeclaUsuario==this.tecla
+  }
+  dibujo() {
+    fill(this.rgba);
+    strokeWeight(this.linea);
+    stroke(this.lineargba);
+    push();
+    translate(this.xO, this.yO);
+    rotate(radians(this.alpha));
+    triangle(
+      (-2 / 3) * this.length,
+      (1 / 3) * this.length,
+      (1 / 3) * this.length,
+      (1 / 3) * this.length,
+      (1 / 3) * this.length,
+      (-2 / 3) * this.length
+    );
+    pop();
+  }
+}
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  let wW = windowWidth,
-    p0x = 0 * (wW / 125),
-    p28x = 28 * (wW / 125),
-    p14x = 14 * (wW / 125),
-    p21x = 21 * (wW / 125),
-    p7x = 7 * (wW / 125);
-  triangulo1 = new Triangulo(p0x, p0x, p28x, p0x, p14x, p14x, 3, 150, 54);
-  triangulo2 = new Triangulo(p0x, p0x, p0x, p28x, p14x, p14x, 255, 87, 5);
-  triangulo3 = new Triangulo(p28x, p0x, p28x, p14x, p21x, p7x, 88, 24, 69);
-  triangulo4 = new Triangulo(p14x, p14x, p21x, p21x, p7x, p21x, 16, 26, 187);
-  triangulo5 = new Triangulo(p28x, p14x, p14x, p28x, p28x, p28x, 199, 0, 57);
+
+  Triangulo1= new Triangulo(90,90,'red',120)
+  Triangulo2= new Triangulo(90,220,'aqua',120)
+  Triangulo3  = new Triangulo(50,310,'aquamarine',60)
+  Triangulo4  = new Triangulo(150,310,'blue',60)
+  Triangulo5 = new Triangulo(90,400,'blueviolet',85)
+
+
+  Figuras = [
+    Triangulo1,
+    Triangulo2,
+    Triangulo3,
+    Triangulo4,
+    Triangulo5,
+  ];
+
+  /*fondo = Object.assign([], Figuras)
+  for (indice in Figuras) {
+    fondo[indice]=Object.assign([],Figuras[indice])  
+  }
+  Niveles(fondo)*/
+}
+
+/*function Niveles(fondo){
+  let x, y, a, b;  
+  for(indice in fondo ){  
+    x = Datos.x[indice];
+    y= Datos.y[indice]
+    a= Datos.rotacion[indice]
+    fondo[indice].linea=5
+    fondo[indice].lineargba= color(255)
+    fondo[indice].permitir=true
+    fondo[indice].rgba= color(255)
+    fondo[indice].desplazar(x,y)
+    fondo[indice].rotar(a)
+    if (indice==6){
+      fondo[indice].r=Datos.reflejar
+    }
+        fondo[indice].permitir=false
+  }
+  
+}*/
+
+function exportar(Figuras) {
+  let x = [];
+  let y = [];
+  let tetha = [];
+  let r = Figuras[6].r;
+  for (indice in Figuras) {
+    x.push(Figuras[indice].xO);
+    y.push(Figuras[indice].yO);
+    tetha.push(Figuras[indice].alpha);
+  }
+  return {
+    x: x,
+    y: y,
+    rotacion: tetha,
+    reflejar: r,
+  };
 }
 
 function draw() {
   background(220);
-  triangulo1.show();
-  triangulo2.show();
-  triangulo3.show();
-  triangulo4.show();
-  triangulo5.show();
+  
+  /* for (indice in Figuras) {
+    fondo[indice].dibujo()   
+  }*/
+  for (indice in Figuras) {     
+    Figuras[indice].dibujo();
+     Figuras[indice].evaluar(TeclaUsuario,ColorUsuario);
+  }
+
+  Teclado();
 }
 
-function mousePressed() {
-  if (triangulo1.clicked() == true) {
-    triangulo1.x0 = mouseX;
-    triangulo1.y0 = mouseY;
-    print("pressed");
-  } else if (triangulo2.clicked() == true) {
-    triangulo2.x0 = mouseX;
-    triangulo2.y0 = mouseY;
-  } else if (triangulo3.clicked() == true) {
-    triangulo3.x0 = mouseX;
-    triangulo3.y0 = mouseY;
-  } else if (triangulo4.clicked() == true) {
-    triangulo4.x0 = mouseX;
-    triangulo4.y0 = mouseY;
-  } else if (triangulo5.clicked() == true) {
-    triangulo5.x0 = mouseX;
-    triangulo5.y0 = mouseY;
+function Teclado() {
+  
+  for (indice in Figuras) {
+    let x = Figuras[indice].xO;
+    let y = Figuras[indice].yO ;  
+    let Tetha = Figuras[indice].alpha;
+    if (Triangulo1.tecla - 1 == indice) {
+      
+      if (keyIsDown(LEFT_ARROW)) {
+        x = Figuras[indice].xO - 2;
+      }
+      if (keyIsDown(RIGHT_ARROW)) {
+        x = Figuras[indice].xO + 2;
+      }
+      if (keyIsDown(UP_ARROW)) {
+        y = Figuras[indice].yO - 2;
+      }
+      if (keyIsDown(DOWN_ARROW)) {
+        y = Figuras[indice].yO + 2;
+      }
+      if (keyIsDown(CONTROL)) {
+        Tetha = Figuras[indice].alpha + 0.5;
+      } else if (keyIsDown(SHIFT)) {
+        Tetha = Figuras[indice].alpha - 0.5;
+      } 
+      Figuras[indice].rgba = color(70, 90, 110, 255);
+      Figuras[indice].linea = 5;
+      print(Tetha)
+      print(x)
+      print(y)
+      Figuras[indice].desplazar(x, y);
+      Figuras[indice].rotar(Tetha);
+    }
+  }
+}
+
+/*function keyReleased() {
+  if (Cuadrado2.teclar == "r") {
+    Cuadrado2.tecla = "7";
+    Cuadrado2.reflejar(-Cuadrado2.r);
+  }
+}*/
+function keyPressed() {
+    //Cuadrado2.teclar = key;
+}
+function keyTyped() {
+  if (key === "s") {
+    n += 1;
+    saveJSON(exportar(Figuras), "Nivel" + n);
+  }
+  TeclaUsuario = key
+  for (indice in Figuras) {
+    Figuras[indice].tecla = key;
+    Figuras[indice].linea = 1;
+    Triangulo1.rgba = color('red');
+    Triangulo2.rgba = color('aqua');
+    Triangulo3.rgba = color('aquamarine');
+    Triangulo4.rgba = color('blue');
+    Triangulo5.rgba = color('blueviolet');
+  }
+}
+
+function mouseWheel(event) {
+  for (indice in Figuras) {
+    A = Figuras[indice].alpha + event.deltaY * 0.5;
+    Figuras[indice].rotar(A);
   }
 }
 function mouseDragged() {
-  if (triangulo1.clicked() == true) {
-    triangulo1.dx = mouseX - triangulo1.x0;
-    triangulo1.dy = mouseY - triangulo1.y0;
-    print("Dragged");
-  } else if (triangulo2.clicked() == true) {
-    triangulo2.dx = mouseX - triangulo2.x0;
-    triangulo2.dy = mouseY - triangulo2.y0;
-  } else if (triangulo3.clicked() == true) {
-    triangulo3.dx = mouseX - triangulo3.x0;
-    triangulo3.dy = mouseY - triangulo3.y0;
-  } else if (triangulo4.clicked() == true) {
-    triangulo4.dx = mouseX - triangulo4.x0;
-    triangulo4.dy = mouseY - triangulo4.y0;
-  } else if (triangulo5.clicked() == true) {
-    triangulo5.dx = mouseX - triangulo5.x0;
-    triangulo5.dy = mouseY - triangulo5.y0;
+  for (indice in Figuras) {
+    Figuras[indice].desplazar(mouseX, mouseY);
   }
 }
-function mouseClicked() {
-  triangulo1.actualizar();
-  triangulo2.actualizar();
-  triangulo3.actualizar();
-  triangulo4.actualizar();
-  triangulo5.actualizar();
-  print("Clicked");
+function mousePressed(){
+  ColorUsuario=get(mouseX,mouseY)
 }
 
-class Triangulo {
-  constructor(ax, ay, bx, by, cx, cy, r, g, b) {
-    //Método de creación
-    this.ax = ax;
-    this.ay = ay;
-    this.bx = bx;
-    this.by = by;
-    this.cx = cx;
-    this.cy = cy;
-    this.r = r;
-    this.g = g;
-    this.b = b;
-    this.dx = 0;
-    this.dy = 0;
-    this.x0 = 0;
-    this.y0 = 0;
+function arraysIdentical(a, b) {
+  var i = a.length;
+  if (i != b.length) return false;
+  while (i--) {
+    if (a[i] !== b[i]) return false;
   }
-  show() {
-    fill(this.r, this.g, this.b);
-    let ax = this.dx + this.ax,
-      bx = this.dx + this.bx,
-      cx = this.dx + this.cx,
-      ay = this.dy + this.ay,
-      by = this.dy + this.by,
-      cy = this.dy + this.cy;
-
-    triangle(ax, ay, bx, by, cx, cy);
-  }
-  actualizar() {
-    this.ax = this.dx + this.ax;
-    this.bx = this.dx + this.bx;
-    this.cx = this.dx + this.cx;
-    this.ay = this.dy + this.ay;
-    this.by = this.dy + this.by;
-    this.cy = this.dy + this.cy;
-    this.dx = 0;
-    this.dy = 0;
-  }
-
-  clicked() {
-    let Px = mouseX,
-      Py = mouseY,
-      v1 =
-        (this.ax * (this.cy - this.ay) +
-          (Py - this.ay) * (this.cx - this.ax) -
-          Px * (this.cy - this.ay)) /
-        ((this.by - this.ay) * (this.cx - this.ax) -
-          (this.bx - this.ax) * (this.cx - this.ay)),
-      v2 = (Py - this.ay - v1 * (this.by - this.ay)) / (this.cy - this.ay),
-      v3 = v1 + v2;
-    if (v1 >= 0 && v2 >= 0 && v3 <= 1) {
-      console.log("true");
-      return true;
-    } else {
-      console.log("false");
-      return false;
-    }
-  }
+  return true;
 }
