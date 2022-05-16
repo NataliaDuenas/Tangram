@@ -4,6 +4,10 @@ let Fondo;
 let ColorUsuario = [];
 let TeclaUsuario = "tcla";
 let n = 0;
+let tamaño;
+let areaNiveles;
+let areaLimite;
+let pixeles=0;
 
 function preload() {
   let i = random(1, 2);
@@ -13,20 +17,21 @@ function preload() {
 }
 
 class Piezas {
-  constructor(xO, yO, rgba, longitud = 1, escala = windowHeight) {
+  constructor(xO, yO, rgba,tecla=0, longitud = 1) { 
     (this.xO = xO),
       (this.yO = yO),
       (this.alpha = 0),
-      (this.permitir = false),
-      (this.tecla = ""),
+      (this.permitir = false), 
       (this.rgba = color(rgba)),
+      (this.tecla = tecla),
       (this.linea = 1),
-      (this.lineargba = color("black")),
+      (this.lineargba = color("rgba(64, 64, 89,255)")),
       (this.longitud = longitud),
       (this.a = [1, 2]),
       (this.b = [2, 3]),
+      (this.c = [2, 3]),
       (this.r = 1),
-      (this.escala = escala / 100);
+      (this.escala = 1);
   }
   rotar(angulo) {
     if (this.permitir) {
@@ -48,14 +53,17 @@ class Piezas {
   shape() {
     print("No tiene forma");
   }
-
   dibujo() {
-    if (windowWidth < windowHeight) {
-      this.escala = windowWidth / 100;
+    this.escala = tamaño / 100;
+    if (TeclaUsuario == this.tecla) {
+      fill("#FFFF71");
+      strokeWeight(3);
+      stroke("Ivory");
+    } else {
+      fill(this.rgba);
+      strokeWeight(this.linea);
+      stroke(this.lineargba);
     }
-    fill(this.rgba);
-    strokeWeight(this.linea);
-    stroke(this.lineargba);
     push();
     translate(this.xO, this.yO);
     rotate(radians(this.alpha));
@@ -106,18 +114,22 @@ class Cuadrilatero extends Piezas {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-
+   pixelDensity(1)
   if (windowWidth < windowHeight) {
-      tamaño=windowWidth
-    } else { tamaño= windowHeight;}
-  print(tamaño)
-  Triangulo1 = new Triangulo(tamaño/5, tamaño / 5, "red", 24);
-  Triangulo2 = new Triangulo(tamaño/5, tamaño / 2.15, "aquamarine", 24);
-  Triangulo3 = new Triangulo(tamaño/9, tamaño / 1.55, "maroon", 12);
-  Triangulo4 = new Triangulo(tamaño/3, tamaño / 1.55, "blueviolet", 17);
-  Triangulo5 = new Triangulo(tamaño/9, tamaño / 1.2, "coral", 12);
-  Cuadrado1 = new Cuadrado(tamaño/2.5, tamaño / 5, "teal");
-  Cuadrado2 = new Cuadrilatero(tamaño/3, tamaño / 1.2, "#03A9F4");
+    tamaño = windowWidth;
+  } else {
+    tamaño = windowHeight;
+  }
+ let cx, cy;
+   cx = tamaño / 1.1;
+  cy = tamaño / 1.2;
+  Triangulo1 = new Triangulo(cx, tamaño / 5, "Turquoise", "1", 24);
+  Triangulo2 = new Triangulo(cx, tamaño / 2.15, "Orchid", "2", 24);
+  Triangulo3 = new Triangulo(cx, tamaño / 1.55, "LightGreen", "3", 12);
+  Triangulo4 = new Triangulo(cx, cy, "DarkOrange", "4", 17);
+  Triangulo5 = new Triangulo(tamaño / 9, cy, "DarkMagenta", "5", 12);
+  Cuadrado1 = new Cuadrado(tamaño / 1.6, cy, "Goldenrod", "6");
+  Cuadrado2 = new Cuadrilatero(tamaño / 3, cy, "Crimson", "7");
 
   Figuras = [
     Triangulo1,
@@ -138,7 +150,6 @@ function setup() {
   Fondo7 = new Cuadrilatero(0, 0, "Ivory");
 
   Fondo = [Fondo1,Fondo2, Fondo3, Fondo4, Fondo5, Fondo6, Fondo7]
-  print(Fondo)
   Niveles(Fondo)
 }
 
@@ -150,12 +161,12 @@ function Niveles(Fondo){
     tetha= Datos.rotacion[indice]
     longitud = Datos.longitud[indice]
     print(longitud)
-    Fondo[indice].linea=3
-    Fondo[indice].lineargba= color('Ivory')
     Fondo[indice].permitir=true
     Fondo[indice].desplazar(x,y)
     Fondo[indice].rotar(tetha)
     Fondo[indice].longitud= longitud
+    Fondo[indice].linea=3
+    Fondo[indice].lineargba='Ivory'
     if (indice==6){
       Fondo[indice].r=Datos.reflejar
     }
@@ -175,13 +186,59 @@ function draw() {
   }
 
   Teclado();
+  Area()
+  PasarNivel()
 }
+
+
+function Area() {
+  let Punto1x;
+  let Punto1y;
+  let Punto2x;
+  let Punto2y;
+  Punto1x = (-2 / 3) * Triangulo1.escala * Triangulo1.longitud;
+  Punto1y = (1 / 3) * Triangulo1.escala * Triangulo1.longitud;
+  Punto2x = (1 / 3) * Triangulo1.escala * Triangulo1.longitud;
+  Punto2y = (-2 / 3) * Triangulo1.escala * Triangulo1.longitud;
+  distanciaNiveles = int(
+    sqrt(pow(Punto1x - Punto2x, 2) + pow(Punto1y - Punto2y, 2))
+  );
+  areaNiveles = int(pow(distanciaNiveles, 2));
+  return { areaNiveles };
+}
+function ValidarNivel() {
+  let r, g, b, a;
+  loadPixels();
+  pixeles = 0;
+  for (y = 0; y < int((3 * tamaño) / 4); y++) {
+    for (x = 0; x < int((3 * tamaño) / 4); x++) {
+      indice = (x + y * windowWidth) * 4;
+      r = pixels[indice + 0];
+      g = pixels[indice + 1];
+      b = pixels[indice + 2];
+      a = pixels[indice + 3];
+      if (r == 255 && g == 255 && b == 240 && a == 255) {
+        pixeles += 1;
+      }
+    }
+  }
+  return pixeles;
+}
+function PasarNivel(){
+  ValidarNivel()
+  print(pixeles)
+  print(areaNiveles-pixeles)
+  print(0.02*areaNiveles)
+  if(areaNiveles>pixeles && pixeles<0.02*areaNiveles){
+    print("salvar");}
+}
+
 function Teclado() {
   for (indice in Figuras) {
     let x = Figuras[indice].xO;
     let y = Figuras[indice].yO;
     let Tetha = Figuras[indice].alpha;
-    if (Triangulo1.tecla - 1 == indice) {
+    if (Figuras[indice].tecla == TeclaUsuario) {
       if (keyIsDown(LEFT_ARROW)) {
         x = Figuras[indice].xO - 2;
       }
@@ -199,46 +256,20 @@ function Teclado() {
       } else if (keyIsDown(SHIFT)) {
         Tetha = Figuras[indice].alpha - 0.5;
       }
-      Figuras[indice].rgba = color(242, 255, 2, 255);
-      Figuras[indice].lineargba = color(255);
-      print(Tetha);
-      print(x);
-      print(y);
       Figuras[indice].desplazar(x, y);
       Figuras[indice].rotar(Tetha);
     }
   }
 }
-
-function keyReleased() {
-  if (Cuadrado2.teclar == "r") {
-    Cuadrado2.tecla = "7";
-    Cuadrado2.reflejar(-Cuadrado2.r);
-  }
-}
-function keyPressed() {
-  Cuadrado2.teclar = key;
-}
 function keyTyped() {
-  if (key === "s") {
-    n += 1;
-    saveJSON(exportar(Figuras), "Nivel" + n);
-  }
   TeclaUsuario = key;
-  for (indice in Figuras) {
-    Figuras[indice].tecla = key;
-    Figuras[indice].lineargba = color(0);
-    Triangulo1.rgba = color("red");
-    Triangulo2.rgba = color("aquamarine");
-    Triangulo3.rgba = color("maroon");
-    Triangulo4.rgba = color("blueviolet");
-    Triangulo5.rgba = color("coral");
-    Cuadrado1.rgba = color("teal");
-    Cuadrado2.rgba = color("blue");
+  if (TeclaUsuario == "r") {
+    Cuadrado2.reflejar(-Cuadrado2.r);
   }
 }
 
 function mouseWheel(event) {
+  ColorUsuario=get(mouseX, mouseY)
   for (indice in Figuras) {
     A = Figuras[indice].alpha + event.deltaY * 0.5;
     Figuras[indice].rotar(A);
